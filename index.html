@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FoXxy — baixe o app</title>
+<meta name="description" content="FoXxy: canais de voz, vídeo, compartilhamento de tela e bate-papo para jogar e conversar com os amigos." />
+<meta name="theme-color" content="#050816" />
+<meta property="og:title" content="FoXxy — baixe o app" />
+<meta property="og:description" content="Canais de voz, vídeo, compartilhamento de tela e bate-papo para jogar e conversar com os amigos." />
+<meta property="og:image" content="https://gabrielftl-13.github.io/FoXxy-app/icone.png" />
+<link rel="icon" href="icone.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root {
+    --fundo-1: #040714;
+    --fundo-2: #0a1838;
+    --fundo-3: #0d2c55;
+    --ciano: #39e6ff;
+    --verde: #45e0b0;
+    --texto: #eef3ff;
+    --texto-2: #b9c4dd;
+    --vidro: rgba(255, 255, 255, .06);
+    --vidro-borda: rgba(140, 220, 255, .16);
+    --titulo: 'Unbounded', system-ui, sans-serif;
+    --corpo: 'Inter', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--corpo);
+    color: var(--texto);
+    background: var(--fundo-1);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* ---------- Céu: gradiente, estrelas e brilhos ---------- */
+  .ceu {
+    position: fixed; inset: 0; z-index: -2;
+    background:
+      radial-gradient(1200px 700px at 75% 10%, rgba(32, 140, 200, .35), transparent 60%),
+      radial-gradient(900px 600px at 10% 80%, rgba(40, 90, 220, .30), transparent 60%),
+      linear-gradient(180deg, var(--fundo-1) 0%, var(--fundo-2) 45%, var(--fundo-3) 100%);
+  }
+  .estrelas { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+  .estrelas i {
+    position: absolute; width: 3px; height: 3px; border-radius: 1px;
+    background: #cfe9ff; opacity: .5;
+    animation: piscar var(--d, 4s) ease-in-out infinite var(--a, 0s);
+  }
+  .estrelas i.mais { width: 13px; height: 13px; background: none; opacity: .35; }
+  .estrelas i.mais::before, .estrelas i.mais::after {
+    content: ''; position: absolute; background: #cfe9ff; border-radius: 1px;
+  }
+  .estrelas i.mais::before { left: 6px; top: 0; width: 1.5px; height: 13px; }
+  .estrelas i.mais::after { top: 6px; left: 0; height: 1.5px; width: 13px; }
+  @keyframes piscar { 50% { opacity: .1; transform: scale(.7); } }
+
+  /* Cacos low-poly flutuando (o "brinquedo 3D" do Discord, no estilo da raposa) */
+  .caco {
+    position: absolute; pointer-events: none; z-index: 0;
+    filter: blur(var(--borrao, 0px)) drop-shadow(0 0 18px rgba(57, 230, 255, .55));
+    animation: flutuar var(--t, 9s) ease-in-out infinite;
+    opacity: .85;
+  }
+  @keyframes flutuar {
+    0%, 100% { transform: translateY(0) rotate(var(--r0, 0deg)); }
+    50% { transform: translateY(-26px) rotate(var(--r1, 12deg)); }
+  }
+
+  /* ---------- Topo ---------- */
+  .topo {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px clamp(16px, 4vw, 48px);
+    transition: padding .3s;
+  }
+  .marca {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--titulo); font-weight: 900; font-size: 22px; letter-spacing: -.5px;
+    padding: 8px 18px 8px 8px; border-radius: 999px;
+    transition: background .3s, color .3s, box-shadow .3s;
+  }
+  .marca img { width: 36px; height: 36px; border-radius: 10px; }
+  .topo.rolou { padding-top: 14px; padding-bottom: 14px; }
+  .topo.rolou .marca { background: #fff; color: #07102a; box-shadow: 0 8px 30px rgba(0, 0, 0, .35); }
+  .botao-pilula {
+    background: #fff; color: #07102a; font-weight: 600; font-size: 15px;
+    padding: 12px 22px; border-radius: 999px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, .3);
+    transition: transform .2s, box-shadow .2s, color .2s;
+  }
+  .botao-pilula:hover { transform: translateY(-2px); color: #0b6c86; box-shadow: 0 12px 36px rgba(57, 230, 255, .35); }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative; min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 120px clamp(16px, 6vw, 96px) 64px;
+    overflow: hidden;
+  }
+  .hero-texto { position: relative; z-index: 2; max-width: 780px; }
+  h1, h2 {
+    font-family: var(--titulo); font-weight: 900; text-transform: uppercase;
+    line-height: .98; letter-spacing: -1px;
+  }
+  h1 { font-size: clamp(36px, 6.4vw, 84px); }
+  h1 .brilho {
+    background: linear-gradient(90deg, var(--ciano), var(--verde));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 24px rgba(57, 230, 255, .35));
+  }
+  .hero-texto p {
+    margin-top: 24px; max-width: 560px;
+    font-size: clamp(17px, 1.6vw, 21px); line-height: 1.5; color: var(--texto-2);
+  }
+
+  /* Pista onde a raposa corre de um lado para o outro */
+  .pista {
+    position: relative; z-index: 1;
+    height: clamp(190px, 26vw, 330px);
+    margin: 12px calc(-1 * clamp(16px, 6vw, 96px)) 0;
+  }
+  .pista canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .chao {
+    position: absolute; left: 0; right: 0; bottom: 8%; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(57, 230, 255, .55) 20%, rgba(69, 224, 176, .55) 80%, transparent);
+    box-shadow: 0 0 18px 2px rgba(57, 230, 255, .35);
+  }
+  .chao::after { /* grade em perspectiva, como o chão da imagem original */
+    content: ''; position: absolute; left: 0; right: 0; top: 2px; height: 90px;
+    background:
+      repeating-linear-gradient(90deg, rgba(57, 230, 255, .12) 0 1px, transparent 1px 60px),
+      repeating-linear-gradient(180deg, rgba(57, 230, 255, .10) 0 1px, transparent 1px 18px);
+    transform: perspective(240px) rotateX(58deg); transform-origin: top;
+    -webkit-mask-image: linear-gradient(180deg, #000, transparent 85%);
+            mask-image: linear-gradient(180deg, #000, transparent 85%);
+  }
+  .raposa {
+    --w: clamp(220px, 30vw, 440px);
+    position: absolute; left: 0;
+    /* O chão do desenho fica a 17,3% da altura do SVG (altura = 0,594 × largura): assim as
+       patas pisam exatamente na linha do chão da página. */
+    bottom: calc(8% + 1px - var(--w) * .1027);
+    width: var(--w);
+    will-change: transform;
+    user-select: none; -webkit-user-drag: none;
+  }
+
+  .acoes {
+    position: relative; z-index: 2;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;
+    margin-top: 28px;
+  }
+  .botao {
+    display: inline-flex; align-items: center; gap: 14px;
+    font-size: 19px; font-weight: 500;
+    padding: 20px 32px; border-radius: 14px;
+    transition: transform .2s, box-shadow .2s, background .2s;
+  }
+  .botao i { font-size: 20px; }
+  .botao--branco { background: #fff; color: #07102a; }
+  .botao--branco:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(255, 255, 255, .18); }
+  .botao--ciano { background: linear-gradient(135deg, #1fb6e0, #2fd3a4); color: #04121f; font-weight: 600; }
+  .botao--ciano:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(57, 230, 255, .4); }
+  .botao small { display: block; font-size: 12.5px; font-weight: 500; opacity: .65; margin-top: 2px; }
+  .nota-download {
+    position: relative; z-index: 2; text-align: center; margin-top: 18px;
+    color: var(--texto-2); font-size: 14px;
+  }
+  .nota-download a { color: var(--ciano); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ---------- Seções em cartão (como as do Discord) ---------- */
+  .secao { padding: 48px clamp(16px, 6vw, 96px); position: relative; }
+  .cartao {
+    max-width: 1300px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.25fr 1fr; align-items: center; gap: clamp(28px, 5vw, 72px);
+    padding: clamp(16px, 2.2vw, 32px);
+    border-radius: clamp(28px, 5vw, 72px);
+    background: linear-gradient(135deg, rgba(120, 200, 255, .16), rgba(255, 255, 255, .04));
+    border: 1px solid var(--vidro-borda);
+    backdrop-filter: blur(6px);
+  }
+  .cartao.invertido { grid-template-columns: 1fr 1.25fr; }
+  .cartao.invertido .palco { order: 2; }
+  .palco {
+    position: relative; min-height: clamp(320px, 38vw, 520px);
+    border-radius: clamp(22px, 4vw, 56px);
+    display: grid; place-items: center; overflow: hidden;
+    padding: 28px;
+  }
+  .palco--voz { background: radial-gradient(circle at 30% 20%, #1d4fa8, #0b1640 70%); }
+  .palco--chat { background: radial-gradient(circle at 70% 90%, #0f8f8a, #0a2a4a 65%); }
+  .palco--tela { background: radial-gradient(circle at 50% 0%, #2a3fb8, #0a1338 70%); }
+  .cartao-texto { padding: 12px clamp(8px, 2vw, 24px) 12px 0; }
+  .cartao.invertido .cartao-texto { padding: 12px 0 12px clamp(8px, 2vw, 24px); }
+  h2 { font-size: clamp(26px, 3.2vw, 46px); }
+  .cartao-texto p { margin-top: 20px; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.55; color: var(--texto-2); }
+
+  /* Animação de entrada ao rolar */
+  .surgir { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .8s ease; }
+  .surgir.visivel { opacity: 1; transform: none; }
+
+  /* ---------- Mockups do app ---------- */
+  .janela {
+    background: #15171d; border-radius: 14px; border: 1px solid rgba(255, 255, 255, .07);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, .45);
+    font-size: 14px; color: #a9adb8; width: 100%;
+  }
+  .lista-canais { width: min(270px, 100%); padding: 16px 10px; }
+  .lista-canais .cab { color: #eef0f4; font-weight: 600; padding: 0 8px 14px; border-bottom: 1px solid rgba(255,255,255,.06); margin-bottom: 12px; display: flex; justify-content: space-between; }
+  .rotulo { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #676c78; padding: 10px 8px 6px; font-weight: 600; }
+  .canal { padding: 7px 8px; border-radius: 6px; display: flex; gap: 8px; align-items: center; }
+  .canal.ativo { background: #2a2e38; color: #eef0f4; }
+  .canal.voz { color: var(--verde); }
+  .pessoa { display: flex; align-items: center; gap: 8px; padding: 5px 8px 5px 30px; color: #c6cad4; }
+  .av {
+    width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+    display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #07102a;
+  }
+  .falando { box-shadow: 0 0 0 2px #15171d, 0 0 0 4px var(--verde); animation: falar 1.6s ease-in-out infinite; }
+  @keyframes falar { 50% { box-shadow: 0 0 0 2px #15171d, 0 0 0 4px transparent; } }
+
+  .grade-voz { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: min(340px, 100%); }
+  .tile {
+    aspect-ratio: 16 / 10; border-radius: 12px; display: grid; place-items: center; position: relative;
+    border: 2px solid transparent;
+  }
+  .tile .av { width: 46px; height: 46px; font-size: 18px; }
+  .tile span { position: absolute; left: 8px; bottom: 6px; font-size: 11px; background: rgba(0,0,0,.45); color: #fff; padding: 2px 7px; border-radius: 5px; }
+  .tile.fala { border-color: var(--verde); }
+  .palco-voz-conteudo { display: flex; gap: 22px; align-items: center; width: 100%; justify-content: center; flex-wrap: wrap; }
+  .etiqueta-flutuante {
+    position: absolute; top: 9%; right: 8%;
+    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); backdrop-filter: blur(8px);
+    color: #fff; padding: 10px 18px; border-radius: 14px; font-size: 18px; display: flex; gap: 10px; align-items: center;
+    animation: flutuar 6s ease-in-out infinite; --r0: -2deg; --r1: 2deg;
+  }
+
+  .chat { width: min(460px, 100%); padding: 18px 18px 14px; }
+  .msg { display: flex; gap: 12px; padding: 8px 6px; border-radius: 8px; }
+  .msg .av { width: 36px; height: 36px; font-size: 14px; }
+  .msg b { color: #eef0f4; font-weight: 600; margin-right: 6px; }
+  .msg time { font-size: 11px; color: #676c78; }
+  .msg p { color: #d7dae1; margin-top: 2px; line-height: 1.4; }
+  .msg.mencionado { background: rgba(245, 169, 78, .1); box-shadow: inset 2px 0 0 #f5a94e; }
+  .mencao { background: rgba(245, 169, 78, .22); color: #f5c27e; padding: 0 3px; border-radius: 4px; }
+  .reacoes { display: flex; gap: 6px; margin-top: 6px; }
+  .reacao { background: #22252d; border: 1px solid rgba(69,224,176,.4); border-radius: 8px; padding: 2px 8px; font-size: 13px; color: #eef0f4; }
+  .digitando { font-size: 12px; color: #676c78; padding: 4px 6px 10px; }
+  .digitando i { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #a9adb8; margin-right: 2px; animation: pulo 1s infinite; }
+  .digitando i:nth-child(2) { animation-delay: .15s; } .digitando i:nth-child(3) { animation-delay: .3s; }
+  @keyframes pulo { 50% { transform: translateY(-4px); } }
+  .caixa { background: #22252d; border-radius: 10px; padding: 12px 14px; color: #676c78; display: flex; justify-content: space-between; }
+
+  .tela { width: min(520px, 100%); overflow: hidden; }
+  .tela-barra { display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,.06); }
+  .tela-barra i { width: 10px; height: 10px; border-radius: 50%; background: #2a2e38; }
+  .codigo { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; line-height: 1.75; padding: 14px 18px; color: #c6cad4; white-space: pre; overflow: hidden; }
+  .k { color: #c792ea; } .f { color: #82aaff; } .s { color: #c3e88d; } .c { color: #676c78; }
+  .cursor-amigo { display: inline-block; width: 2px; height: 1.1em; background: #f5a94e; vertical-align: -2px; position: relative; animation: piscar 1s steps(2) infinite; }
+  .cursor-amigo::after { content: 'testeb'; position: absolute; top: -18px; left: 0; font: 600 10px var(--corpo); background: #f5a94e; color: #07102a; padding: 1px 5px; border-radius: 4px; }
+  .ao-vivo { position: absolute; top: 9%; left: 8%; background: #e5484d; color: #fff; font-weight: 700; font-size: 13px; padding: 6px 12px; border-radius: 8px; letter-spacing: .5px; }
+
+  /* ---------- Chamada final ---------- */
+  .final { text-align: center; padding: 120px 16px 80px; position: relative; }
+  .final h2 { font-size: clamp(30px, 5vw, 64px); }
+  .final p { color: var(--texto-2); margin: 18px auto 0; max-width: 520px; font-size: 18px; line-height: 1.5; }
+  .final .raposa-final { display: block; width: clamp(180px, 22vw, 280px); margin: 0 auto 18px; }
+
+  footer {
+    border-top: 1px solid rgba(255,255,255,.08); padding: 28px clamp(16px, 6vw, 96px);
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px;
+    color: var(--texto-2); font-size: 14px;
+  }
+  footer a:hover { color: var(--ciano); }
+
+  /* ---------- Celular ---------- */
+  @media (max-width: 860px) {
+    .cartao, .cartao.invertido { grid-template-columns: 1fr; }
+    .cartao.invertido .palco { order: 0; }
+    .cartao-texto, .cartao.invertido .cartao-texto { padding: 8px 8px 16px; }
+    .palco { padding: 18px; }
+    .lista-canais { display: none; }
+    .botao { width: 100%; justify-content: center; }
+    .etiqueta-flutuante { font-size: 14px; }
+    .botao-pilula { padding: 10px 16px; font-size: 14px; }
+    .marca { font-size: 19px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .surgir { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="ceu"></div>
+  <div class="estrelas" id="estrelas"></div>
+
+  <header class="topo" id="topo">
+    <a class="marca" href="#"><img src="icone.png" alt="" /> FoXxy</a>
+    <a class="botao-pilula" href="https://videochat-kffs.onrender.com/">Abrir o FoXxy</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <!-- cacos flutuantes -->
+      <svg class="caco" style="top:14%; right:8%; width:120px; --t:10s; --r0:-8deg; --r1:14deg; --borrao:1px" viewBox="0 0 100 100"><polygon points="50,4 96,70 18,92" fill="rgba(57,230,255,.25)" stroke="#39e6ff" stroke-width="2"/><path d="M50,4 L46,60 L96,70 M46,60 L18,92" fill="none" stroke="#39e6ff" stroke-width="1.2" opacity=".7"/></svg>
+      <svg class="caco" style="top:40%; right:30%; width:54px; --t:7s; --r0:20deg; --r1:-6deg; --borrao:3px" viewBox="0 0 100 100"><polygon points="10,20 90,8 60,90" fill="rgba(69,224,176,.3)" stroke="#45e0b0" stroke-width="3"/></svg>
+      <svg class="caco" style="top:20%; left:52%; width:38px; --t:8s; --borrao:4px" viewBox="0 0 100 100"><polygon points="50,0 100,100 0,100" fill="rgba(57,230,255,.35)"/></svg>
+
+      <div class="hero-texto">
+        <h1>O lugar da sua galera pra <span class="brilho">conversar e jogar</span></h1>
+        <p>O FoXxy junta canais de voz, vídeo, compartilhamento de tela e bate-papo num app só. Cria o servidor da galera, chama os amigos e entra na call quando quiser.</p>
+      </div>
+
+      <div class="pista" id="pista">
+        <canvas id="rastro"></canvas>
+        <div class="chao"></div>
+        <img class="raposa" id="raposa" src="raposa.svg" alt="Raposa azul do FoXxy correndo" draggable="false" />
+      </div>
+
+      <div class="acoes">
+        <a class="botao botao--branco" id="botao-baixar" href="https://github.com/GabrielFTL-13/FoXxy-app/releases/latest/download/FoXxy-Setup.exe">
+          <i class="fa-solid fa-download"></i><span>Baixar para Windows</span>
+        </a>
+        <a class="botao botao--ciano" href="https://videochat-kffs.onrender.com/">Abra o FoXxy no seu navegador</a>
+      </div>
+      <p class="nota-download" id="nota-download">
+        Não quer instalar? <a href="https://github.com/GabrielFTL-13/FoXxy-app/releases/latest/download/FoXxy-Portatil.exe">Baixe a versão portátil</a> — é só abrir.
+      </p>
+    </section>
+
+    <section class="secao">
+      <div class="cartao surgir">
+        <div class="palco palco--voz">
+          <div class="etiqueta-flutuante"><i class="fa-solid fa-volume-high"></i> Frequência 1</div>
+          <div class="palco-voz-conteudo">
+            <div class="janela lista-canais">
+              <div class="cab">A galera <i class="fa-solid fa-chevron-down"></i></div>
+              <div class="rotulo">Texto</div>
+              <div class="canal"><span>#</span> geral</div>
+              <div class="canal"><span>#</span> clips</div>
+              <div class="rotulo">Voz</div>
+              <div class="canal voz ativo"><i class="fa-solid fa-volume-high"></i> Frequência 1</div>
+              <div class="pessoa"><span class="av falando" style="background:#45e0b0">G</span> Gabriel</div>
+              <div class="pessoa"><span class="av" style="background:#82aaff">L</span> Lucas</div>
+              <div class="pessoa"><span class="av" style="background:#f5a94e">M</span> Mari</div>
+              <div class="pessoa"><span class="av" style="background:#c792ea">R</span> Rafa</div>
+            </div>
+            <div class="grade-voz">
+              <div class="tile fala" style="background:#1b6e5a"><div class="av falando" style="background:#45e0b0">G</div><span>Gabriel</span></div>
+              <div class="tile" style="background:#24418f"><div class="av" style="background:#82aaff">L</div><span>Lucas</span></div>
+              <div class="tile" style="background:#7a4a1c"><div class="av" style="background:#f5a94e">M</div><span>Mari</span></div>
+              <div class="tile" style="background:#4b2a78"><div class="av" style="background:#c792ea">R</div><span>Rafa</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="cartao-texto">
+          <h2>Entre quando estiver livre — sem precisar ligar</h2>
+          <p>Os canais de voz ficam sempre abertos: é só clicar e você já está na call. Dá pra ver quem está lá antes de entrar, ligar a câmera, usar aperte-para-falar e silenciar tudo com um atalho, mesmo com o jogo aberto.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao">
+      <div class="cartao invertido surgir">
+        <div class="palco palco--chat">
+          <div class="janela chat">
+            <div class="msg"><span class="av" style="background:#82aaff">L</span><div><b>Lucas</b><time>hoje às 21:04</time><p>alguém pra um valorant agora? 🎮</p></div></div>
+            <div class="msg mencionado"><span class="av" style="background:#f5a94e">M</span><div><b>Mari</b><time>hoje às 21:05</time><p><span class="mencao">@Gabriel</span> chama o Rafa, falta um</p>
+              <div class="reacoes"><span class="reacao">🔥 3</span><span class="reacao">👍 2</span></div></div></div>
+            <div class="msg"><span class="av" style="background:#45e0b0">G</span><div><b>Gabriel</b><time>hoje às 21:06</time><p>bora, tô entrando na Frequência 1</p></div></div>
+            <div class="digitando"><i></i><i></i><i></i> Rafa está digitando…</div>
+            <div class="caixa">Enviar mensagem… <i class="fa-regular fa-face-smile"></i></div>
+          </div>
+        </div>
+        <div class="cartao-texto">
+          <h2>Bate-papo do jeito da galera</h2>
+          <p>Mencione os amigos com @, reaja com emoji, fixe o que importa e encontre qualquer mensagem antiga na busca. Mandou errado? Edite ou apague. E as notificações chegam mesmo com o app minimizado.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao">
+      <div class="cartao surgir">
+        <div class="palco palco--tela">
+          <span class="ao-vivo">AO VIVO</span>
+          <div class="janela tela">
+            <div class="tela-barra"><i></i><i></i><i></i></div>
+<div class="codigo"><span class="c">// canal de código: todo mundo edita junto</span>
+<span class="k">function</span> <span class="f">chamarGalera</span>(amigos) {
+  <span class="k">for</span> (<span class="k">const</span> a <span class="k">of</span> amigos) {
+    a.<span class="f">entrar</span>(<span class="s">'Frequência 1'</span>);<span class="cursor-amigo"></span>
+  }
+  <span class="k">return</span> <span class="s">'partiu jogar 🦊'</span>;
+}</div>
+          </div>
+        </div>
+        <div class="cartao-texto">
+          <h2>Mostre sua tela e programe junto</h2>
+          <p>Compartilhe a tela ou só a janela do jogo, com o áudio junto. E nos canais de código a galera escreve no mesmo arquivo ao mesmo tempo e roda o programa ali mesmo.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="final surgir">
+      <img class="raposa-final" src="raposa.svg" alt="" draggable="false" />
+      <h2>Bora chamar a galera?</h2>
+      <p>Baixe o FoXxy, crie seu servidor e mande o convite pros amigos.</p>
+      <div class="acoes">
+        <a class="botao botao--branco" id="botao-baixar-2" href="https://github.com/GabrielFTL-13/FoXxy-app/releases/latest/download/FoXxy-Setup.exe">
+          <i class="fa-solid fa-download"></i><span>Baixar para Windows</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>© FoXxy</span>
+    <span><a href="https://videochat-kffs.onrender.com/">Abrir no navegador</a> · <a href="https://github.com/GabrielFTL-13/FoXxy-app/releases/latest">Todas as versões</a></span>
+  </footer>
+
+<script>
+(() => {
+  const semMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- Estrelas espalhadas pelo céu ----
+  const ceu = document.getElementById('estrelas');
+  for (let i = 0; i < 70; i++) {
+    const e = document.createElement('i');
+    if (i % 9 === 0) e.className = 'mais';
+    e.style.left = Math.random() * 100 + '%';
+    e.style.top = Math.random() * 100 + '%';
+    e.style.setProperty('--d', 3 + Math.random() * 4 + 's');
+    e.style.setProperty('--a', -Math.random() * 5 + 's');
+    ceu.appendChild(e);
+  }
+
+  // ---- Topo vira "pílula" ao rolar, como no Discord ----
+  const topo = document.getElementById('topo');
+  const aoRolar = () => topo.classList.toggle('rolou', scrollY > 40);
+  addEventListener('scroll', aoRolar, { passive: true }); aoRolar();
+
+  // ---- Seções aparecem ao rolar ----
+  const obs = new IntersectionObserver((itens) => {
+    for (const it of itens) if (it.isIntersecting) { it.target.classList.add('visivel'); obs.unobserve(it.target); }
+  }, { threshold: .15 });
+  document.querySelectorAll('.surgir').forEach((el) => obs.observe(el));
+
+  // ---- Fora do Windows o botão principal abre no navegador ----
+  const ehWindows = /Windows/i.test(navigator.userAgent) && !/Phone|Mobile/i.test(navigator.userAgent);
+  if (!ehWindows) {
+    const celular = /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
+    for (const id of ['botao-baixar', 'botao-baixar-2']) {
+      const b = document.getElementById(id);
+      b.href = 'https://videochat-kffs.onrender.com/';
+      b.innerHTML = celular
+        ? '<i class="fa-solid fa-mobile-screen"></i><span>Abrir no celular</span>'
+        : '<i class="fa-solid fa-globe"></i><span>Abrir no navegador</span>';
+    }
+    document.getElementById('nota-download').innerHTML = celular
+      ? 'No celular, abra o FoXxy e toque em <b>“Adicionar à tela inicial”</b> para usar como app.'
+      : 'O app para instalar é para Windows. <a href="https://github.com/GabrielFTL-13/FoXxy-app/releases/latest/download/FoXxy-Setup.exe">Baixar mesmo assim</a>';
+  }
+
+  // ---- A raposa andando de um lado para o outro ----
+  const pista = document.getElementById('pista');
+  const raposa = document.getElementById('raposa');
+  const canvas = document.getElementById('rastro');
+  const ctx = canvas.getContext('2d');
+  let largura = 0, altura = 0;
+  const medir = () => {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    largura = pista.clientWidth; altura = pista.clientHeight;
+    canvas.width = largura * dpr; canvas.height = altura * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  };
+  addEventListener('resize', medir); medir();
+
+  if (semMovimento) {
+    raposa.style.transform = `translateX(${(largura - raposa.clientWidth) / 2}px)`;
+    return;
+  }
+
+  // A raposa (raposa.svg, com a caminhada animada dentro dela) olha para a direita: indo
+  // para a direita fica normal, voltando para a esquerda é espelhada.
+  // VELOCIDADE vem de ferramentas/gerar-raposa.js: é a velocidade com que a pata apoiada
+  // anda para trás. Se a raposa andar em outra velocidade, as patas "patinam" no chão.
+  const VELOCIDADE = 0.2464; // × largura da raposa por segundo
+  let x = -raposa.clientWidth - 40, dir = 1, pausa = 0, ultimo = performance.now(), acumulado = 0;
+  const particulas = [];
+
+  function quadro(agora) {
+    const dt = Math.min((agora - ultimo) / 1000, .25); ultimo = agora;
+    const w = raposa.clientWidth, h = w * 190 / 320;
+    if (pausa > 0) {
+      pausa -= dt;
+    } else {
+      x += dir * VELOCIDADE * w * dt;
+      // Saiu da tela: espera um pouco e volta andando para o outro lado
+      if (dir > 0 && x > largura + 60) { dir = -1; pausa = 1.5; }
+      else if (dir < 0 && x < -w - 60) { dir = 1; pausa = 1.5; }
+    }
+    raposa.style.transform = `translate3d(${x.toFixed(1)}px, 0, 0) scaleX(${dir})`;
+
+    // Faíscas néon soltando da ponta da cauda (e um brilho leve no chão, perto das patas).
+    const chaoY = altura * .92;
+    if (pausa <= 0) {
+      acumulado += dt;
+      while (acumulado > .07) {
+        acumulado -= .07;
+        const caudaX = dir > 0 ? x + w * .06 : x + w * .94;
+        particulas.push({ x: caudaX + (Math.random() - .5) * w * .04, y: chaoY - h * (.42 + Math.random() * .1),
+          vx: -dir * (12 + Math.random() * 26), vy: -8 - Math.random() * 14, vida: 1.1, max: 1.1, tam: 1.2 + Math.random() * 2.2 });
+        if (Math.random() < .35) particulas.push({ x: x + w * (.3 + Math.random() * .4), y: chaoY - 1,
+          vx: -dir * (6 + Math.random() * 14), vy: -6 - Math.random() * 10, vida: .7, max: .7, tam: 1 + Math.random() * 1.3 });
+      }
+    }
+    ctx.clearRect(0, 0, largura, altura);
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = particulas.length - 1; i >= 0; i--) {
+      const p = particulas[i];
+      p.vida -= dt; if (p.vida <= 0) { particulas.splice(i, 1); continue; }
+      p.x += p.vx * dt; p.y += p.vy * dt;
+      const a = p.vida / p.max;
+      ctx.fillStyle = `rgba(90, 235, 255, ${a * .85})`;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.tam * (.6 + a * .4), 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = `rgba(57, 230, 255, ${a * .18})`; // halo barato (sem shadowBlur)
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.tam * 3, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    requestAnimationFrame(quadro);
+  }
+  requestAnimationFrame(quadro);
+})();
+</script>
+</body>
+</html>
