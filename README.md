@@ -1,14 +1,18 @@
-# FoXxy — app para Windows
+<p align="center">
+  <a href="https://gabrielftl-13.github.io/FoXxy-app/"><img src="https://gabrielftl-13.github.io/FoXxy-app/icone.png" width="96" alt="FoXxy"></a>
+</p>
 
-Aqui ficam só os instaladores do app desktop do **FoXxy**. Nenhum código ou dado do servidor.
+<h1 align="center">FoXxy</h1>
 
-## Como instalar
-1. Abra a [última versão](https://github.com/GabrielFTL-13/FoXxy-app/releases/latest).
-2. Baixe o **FoXxy-Setup.exe** e abra.
-3. Se o Windows mostrar "O Windows protegeu o computador": **Mais informações → Executar assim mesmo**
-   (o app não tem assinatura digital paga).
+<p align="center">Canais de voz, vídeo, compartilhamento de tela e bate-papo para jogar e conversar com os amigos.</p>
 
-Instalando pelo **FoXxy-Setup.exe**, as próximas versões chegam sozinhas: o app baixa em segundo
-plano e atualiza quando você fecha pela bandeja (ou na hora, clicando no aviso).
+<h3 align="center">👉 <a href="https://gabrielftl-13.github.io/FoXxy-app/">Baixe o FoXxy no site</a></h3>
 
-Prefere não instalar? Use o **FoXxy-Portatil.exe** — mas ele só avisa quando há versão nova, não se atualiza sozinho.
+<p align="center"><a href="https://gabrielftl-13.github.io/FoXxy-app/">gabrielftl-13.github.io/FoXxy-app</a></p>
+
+---
+
+**Dica:** se, ao abrir o instalador, o Windows mostrar "O Windows protegeu o computador", clique em
+**Mais informações → Executar assim mesmo** (o app não tem assinatura digital paga).
+
+Depois de instalado, as próximas versões chegam sozinhas.
