@@ -174,6 +174,7 @@
     color: var(--texto-2); font-size: 14px;
   }
   .nota-download a { color: var(--ciano); text-decoration: underline; text-underline-offset: 3px; }
+  .nota-versao { margin-top: 6px; font-size: 12.5px; opacity: .85; }
 
   /* ---------- Seções em cartão (como as do Discord) ---------- */
   .secao { padding: 48px clamp(16px, 6vw, 96px); position: relative; }
@@ -335,6 +336,7 @@
       <p class="nota-download" id="nota-download">
         Não quer instalar? <a href="https://github.com/GabrielFTL-13/FoXxy-app/releases/latest/download/FoXxy-Portatil.exe">Baixe a versão portátil</a> — é só abrir.
       </p>
+      <p class="nota-download nota-versao" id="nota-versao" hidden></p>
     </section>
 
     <section class="secao">
@@ -453,6 +455,20 @@
     for (const it of itens) if (it.isIntersecting) { it.target.classList.add('visivel'); obs.unobserve(it.target); }
   }, { threshold: .15 });
   document.querySelectorAll('.surgir').forEach((el) => obs.observe(el));
+
+  // ---- Versão mais nova do app, lida direto do GitHub (os botões sempre baixam a mais nova) ----
+  fetch('https://api.github.com/repos/GabrielFTL-13/FoXxy-app/releases/latest')
+    .then((r) => (r.ok ? r.json() : null))
+    .then((d) => {
+      if (!d || !d.tag_name) return;
+      const el = document.getElementById('nota-versao');
+      const data = d.published_at ? new Date(d.published_at).toLocaleDateString('pt-BR') : '';
+      el.innerHTML = `Versão mais nova: <b></b>${data ? ` · lançada em ${data}` : ''} · <a>o que mudou</a>`;
+      el.querySelector('b').textContent = String(d.tag_name).replace(/^v/, '');
+      el.querySelector('a').href = 'https://github.com/GabrielFTL-13/FoXxy-app/releases/latest';
+      el.hidden = false;
+    })
+    .catch(() => { /* sem internet ou limite da API: só não mostra a versão */ });
 
   // ---- Fora do Windows o botão principal abre no navegador ----
   const ehWindows = /Windows/i.test(navigator.userAgent) && !/Phone|Mobile/i.test(navigator.userAgent);
